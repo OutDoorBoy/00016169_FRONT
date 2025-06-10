@@ -1,0 +1,48 @@
+<div class="movie-list-container">
+  <div class="header">
+    <h1>Movie Collection</h1>
+    <a routerLink="/movies/add" class="btn btn-primary">
+      <i class="icon">+</i>
+      Add New Movie
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading movies...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadMovies()" class="btn btn-secondary">Try Again</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="movies-grid">
+    <div *ngFor="let movie of movies" class="movie-card">
+      <div class="movie-header">
+        <h3>{{ movie.Title || movie.title || 'No Title' }}</h3>
+        <div class="movie-actions">
+          <a [routerLink]="['/movies', movie.Id || movie.id]" class="btn btn-outline">View</a>
+          <a [routerLink]="['/movies', movie.Id || movie.id, 'edit']" class="btn btn-outline">Edit</a>
+          <button (click)="deleteMovie(movie.Id || movie.id)" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+      
+      <div class="movie-info">
+        <p class="description">{{ movie.Description || movie.description || 'No description available' }}</p>
+        <div class="movie-details">
+          <span class="genre">{{ movie.Genre || movie.genre || 'Unknown' }}</span>
+          <span class="year">{{ movie.ReleaseYear || movie.releaseYear || 'Unknown' }}</span>
+          <span class="duration">{{ movie.Duration || movie.duration || 0 }} min</span>
+        </div>
+        <p class="director">Directed by: {{ movie.Director || movie.director || 'Unknown' }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="movies.length === 0" class="no-movies">
+      <h3>No movies found</h3>
+      <p>Start by adding your first movie to the collection!</p>
+      <a routerLink="/movies/add" class="btn btn-primary">Add Movie</a>
+    </div>
+  </div>
+</div>

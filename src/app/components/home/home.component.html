@@ -1,0 +1,91 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to Movie Reviews</h1>
+      <p>Discover, review, and share your favorite movies with our community</p>
+      <div class="hero-actions">
+        <a routerLink="/movies" class="btn btn-primary">Browse Movies</a>
+        <a routerLink="/movies/add" class="btn btn-outline">Add Movie</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="movie-reel">🎬</div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ movieCount }}</div>
+        <div class="stat-label">Movies</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ reviewCount }}</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <div *ngIf="!loading" class="dashboard-sections">
+    <!-- Recent Movies Section -->
+    <section class="recent-movies">
+      <h2>Recent Movies</h2>
+      <div *ngIf="recentMovies.length === 0" class="empty-state">
+        <p>No movies added yet. Be the first to add a movie!</p>
+        <a routerLink="/movies/add" class="btn btn-primary">Add Movie</a>
+      </div>
+      <div *ngIf="recentMovies.length > 0" class="movies-grid">
+        <div *ngFor="let movie of recentMovies" class="movie-card">
+          <h3>{{ movie?.Title || movie?.title || 'Unknown Title' }}</h3>
+          <div class="movie-meta">
+            <span class="genre">{{ movie?.Genre || movie?.genre || 'Unknown' }}</span>
+            <span class="year">{{ movie?.ReleaseYear || movie?.releaseYear || 'Unknown' }}</span>
+          </div>
+          <p class="description">{{ movie?.Description || movie?.description || 'No description available' }}</p>
+          <div class="card-actions">
+            <a [routerLink]="['/movies', movie?.Id || movie?.id]" class="btn btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="movieCount > 6" class="section-footer">
+        <a routerLink="/movies" class="btn btn-outline">View All Movies</a>
+      </div>
+    </section>
+
+    <!-- Recent Reviews Section -->
+    <section class="recent-reviews">
+      <h2>Recent Reviews</h2>
+      <div *ngIf="recentReviews.length === 0" class="empty-state">
+        <p>No reviews yet. Start by reviewing a movie!</p>
+        <a routerLink="/movies" class="btn btn-primary">Browse Movies</a>
+      </div>
+      <div *ngIf="recentReviews.length > 0" class="reviews-list">
+        <div *ngFor="let review of recentReviews" class="review-card">
+          <div class="review-header">
+            <h4>{{ review?.ReviewerName || review?.reviewerName || 'Anonymous' }}</h4>
+            <div class="stars">
+              <span
+                *ngFor="let star of getStarArray(review?.Rating || review?.rating || 0)"
+                class="star"
+                [class.filled]="star <= (review?.Rating || review?.rating || 0)"
+              >★</span>
+            </div>
+          </div>
+          <p class="review-comment" *ngIf="review?.Comment || review?.comment">
+            {{ review?.Comment || review?.comment }}
+          </p>
+          <div class="review-footer">
+            <span class="review-date">{{ (review?.ReviewDate || review?.reviewDate) | date:'shortDate' }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
