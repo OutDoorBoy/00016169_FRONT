@@ -1,0 +1,132 @@
+<div class="movie-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Edit Movie' : 'Add New Movie' }}</h1>
+    <button (click)="onCancel()" class="btn btn-outline">
+      ← Back to Movies
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>{{ isEditMode ? 'Loading movie...' : 'Saving movie...' }}</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <form [formGroup]="movieForm" (ngSubmit)="onSubmit()" class="movie-form" *ngIf="!loading">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          class="form-control"
+          [class.error]="getFieldError('title')"
+          placeholder="Enter movie title"
+        />
+        <div *ngIf="getFieldError('title')" class="field-error">
+          {{ getFieldError('title') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="director">Director *</label>
+        <input
+          type="text"
+          id="director"
+          formControlName="director"
+          class="form-control"
+          [class.error]="getFieldError('director')"
+          placeholder="Enter director name"
+        />
+        <div *ngIf="getFieldError('director')" class="field-error">
+          {{ getFieldError('director') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        rows="4"
+        [class.error]="getFieldError('description')"
+        placeholder="Enter movie description"
+      ></textarea>
+      <div *ngIf="getFieldError('description')" class="field-error">
+        {{ getFieldError('description') }}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="genre">Genre *</label>
+        <select
+          id="genre"
+          formControlName="genre"
+          class="form-control"
+          [class.error]="getFieldError('genre')"
+        >
+          <option value="">Select a genre</option>
+          <option *ngFor="let genre of genres" [value]="genre">{{ genre }}</option>
+        </select>
+        <div *ngIf="getFieldError('genre')" class="field-error">
+          {{ getFieldError('genre') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="releaseYear">Release Year *</label>
+        <input
+          type="number"
+          id="releaseYear"
+          formControlName="releaseYear"
+          class="form-control"
+          [class.error]="getFieldError('releaseYear')"
+          placeholder="e.g., 2023"
+          min="1900"
+          max="2030"
+        />
+        <div *ngIf="getFieldError('releaseYear')" class="field-error">
+          {{ getFieldError('releaseYear') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="duration">Duration (minutes) *</label>
+        <input
+          type="number"
+          id="duration"
+          formControlName="duration"
+          class="form-control"
+          [class.error]="getFieldError('duration')"
+          placeholder="e.g., 120"
+          min="1"
+          max="500"
+        />
+        <div *ngIf="getFieldError('duration')" class="field-error">
+          {{ getFieldError('duration') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="onCancel()" class="btn btn-secondary">
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="!movieForm.valid || loading"
+        class="btn btn-primary"
+        [class.disabled]="!movieForm.valid || loading"
+      >
+        {{ isEditMode ? 'Update Movie' : 'Create Movie' }}
+      </button>
+    </div>
+  </form>
+</div>

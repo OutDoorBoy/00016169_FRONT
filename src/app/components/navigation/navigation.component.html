@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/" class="nav-brand" (click)="closeMenu()">
+      <span class="brand-icon">🎬</span>
+      Movie Reviews
+    </a>
+
+    <button class="nav-toggle" (click)="toggleMenu()" [class.active]="isMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-menu" [class.active]="isMenuOpen">
+      <a routerLink="/movies" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
+        Movies
+      </a>
+      <a routerLink="/movies/add" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
+        Add Movie
+      </a>
+    </div>
+  </div>
+</nav>

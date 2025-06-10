@@ -1,0 +1,175 @@
+<div class="movie-detail-container">
+  <div class="detail-header">
+    <button routerLink="/movies" class="btn btn-outline">
+      ← Back to Movies
+    </button>
+    <div class="header-actions" *ngIf="movie">
+      <a [routerLink]="['/movies', movie?.Id || movie?.id, 'edit']" class="btn btn-primary">
+        Edit Movie
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading movie details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="movie && !loading" class="movie-content">
+    <!-- Movie Information -->
+    <div class="movie-info-card">
+      <div class="movie-header">
+        <h1>{{ (movie?.Title || movie?.title) || 'Unknown Title' }}</h1>
+        <div class="movie-meta">
+          <span class="genre">{{ (movie?.Genre || movie?.genre) || 'Unknown' }}</span>
+          <span class="year">{{ (movie?.ReleaseYear || movie?.releaseYear) || 'Unknown' }}</span>
+          <span class="duration">{{ (movie?.Duration || movie?.duration) || 0 }} min</span>
+        </div>
+      </div>
+      
+      <div class="movie-details">
+        <p class="description">{{ (movie?.Description || movie?.description) || 'No description available' }}</p>
+        <p class="director"><strong>Director:</strong> {{ (movie?.Director || movie?.director) || 'Unknown' }}</p>
+        <p class="created-date">
+          <strong>Added:</strong> {{ (movie?.CreatedDate || movie?.createdDate) | date:'mediumDate' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+      <div class="reviews-header">
+        <h2>Reviews</h2>
+        <div class="review-stats" *ngIf="reviews.length > 0">
+          <div class="average-rating">
+            <span class="rating-number">{{ getAverageRating() }}</span>
+            <div class="stars">
+              <span
+                *ngFor="let star of getStarArray(getAverageRating())"
+                class="star"
+                [class.filled]="star <= getAverageRating()"
+              >★</span>
+            </div>
+            <span class="review-count">({{ reviews.length }} reviews)</span>
+          </div>
+        </div>
+        <button
+          (click)="showReviewForm = !showReviewForm"
+          class="btn btn-primary"
+        >
+          {{ showReviewForm ? 'Cancel' : 'Add Review' }}
+        </button>
+      </div>
+      
+      <!-- Review Form -->
+      <div *ngIf="showReviewForm" class="review-form-card">
+        <h3>Add Your Review</h3>
+        <form [formGroup]="reviewForm" (ngSubmit)="onSubmitReview()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reviewerName">Your Name *</label>
+              <input
+                type="text"
+                id="reviewerName"
+                formControlName="reviewerName"
+                class="form-control"
+                [class.error]="getFieldError('reviewerName')"
+                placeholder="Enter your name"
+              />
+              <div *ngIf="getFieldError('reviewerName')" class="field-error">
+                {{ getFieldError('reviewerName') }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="rating">Rating *</label>
+              <select
+                id="rating"
+                formControlName="rating"
+                class="form-control"
+                [class.error]="getFieldError('rating')"
+              >
+                <option value="">Select rating</option>
+                <option value="1">1 Star - Poor</option>
+                <option value="2">2 Stars - Fair</option>
+                <option value="3">3 Stars - Good</option>
+                <option value="4">4 Stars - Very Good</option>
+                <option value="5">5 Stars - Excellent</option>
+              </select>
+              <div *ngIf="getFieldError('rating')" class="field-error">
+                {{ getFieldError('rating') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="comment">Comment</label>
+            <textarea
+              id="comment"
+              formControlName="comment"
+              class="form-control"
+              rows="4"
+              [class.error]="getFieldError('comment')"
+              placeholder="Share your thoughts about this movie..."
+            ></textarea>
+            <div *ngIf="getFieldError('comment')" class="field-error">
+              {{ getFieldError('comment') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" (click)="showReviewForm = false" class="btn btn-secondary">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="reviewForm.invalid"
+              class="btn btn-primary"
+            >
+              Submit Review
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Reviews List -->
+      <div class="reviews-list">
+        <div *ngIf="reviews.length === 0 && !showReviewForm" class="no-reviews">
+          <h3>No reviews yet</h3>
+          <p>Be the first to review this movie!</p>
+          <button (click)="showReviewForm = true" class="btn btn-primary">
+            Write a Review
+          </button>
+        </div>
+
+        <div *ngFor="let review of reviews" class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <h4>{{ review?.ReviewerName || review?.reviewerName || 'Anonymous' }}</h4>
+              <div class="stars">
+                <span
+                  *ngFor="let star of getStarArray(review?.Rating || review?.rating || 0)"
+                  class="star"
+                  [class.filled]="star <= (review?.Rating || review?.rating || 0)"
+                >★</span>
+              </div>
+            </div>
+            <div class="review-actions">
+              <span class="review-date">{{ (review?.ReviewDate || review?.reviewDate) | date:'mediumDate' }}</span>
+              <button (click)="deleteReview(review?.Id || review?.id)" class="btn-delete" title="Delete review">
+                ×
+              </button>
+            </div>
+          </div>
+          <p class="review-comment" *ngIf="review?.Comment || review?.comment">
+            {{ review?.Comment || review?.comment }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
